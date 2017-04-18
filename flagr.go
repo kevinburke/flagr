@@ -33,7 +33,10 @@ type Booler interface {
 
 // insertAndDelete pops the value at j and inserts it at i, where i < j.
 func insertAndDelete(args []string, i, j int) {
-	if i >= j {
+	if i == j {
+		return // nothing to do
+	}
+	if i > j {
 		panic(fmt.Sprint("i > j", i, j))
 	}
 	val := args[j]
@@ -50,7 +53,7 @@ func insertAndDelete(args []string, i, j int) {
 // or "--") are placed before the non-flag arguments. Arguments after the
 // terminator "--" are returned as is (they are not moved).
 func Rearrange(set *flag.FlagSet, args []string) []string {
-	if len(args) == 0 {
+	if len(args) == 0 || len(args) == 1 {
 		return args
 	}
 	idx := len(args) - 1

@@ -18,6 +18,15 @@ func TestRearrange(t *testing.T) {
 	}
 }
 
+func TestOne(t *testing.T) {
+	f := flag.NewFlagSet("test", flag.ContinueOnError)
+	args := Rearrange(f, []string{"-h"})
+	want := []string{"-h"}
+	if !reflect.DeepEqual(args, want) {
+		t.Errorf("got %q\nwant %q", args, want)
+	}
+}
+
 func Example() {
 	f := flag.NewFlagSet("test", flag.ContinueOnError)
 	f.String("blah", "", "Blah")
