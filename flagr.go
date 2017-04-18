@@ -1,4 +1,23 @@
 // Package flagr rearranges flags so the options come first.
+/*
+This exists because Go won't parse flag arguments ("-o" or "--opt") that come
+after positional arguments:
+
+	f := flag.NewFlagSet("foo", flag.ExitOnError)
+	opt := f.String("opt", "", "an option")
+	f.Parse([]string{"regular-argument", "--opt", "theoption"})
+	fmt.Println(f.Args())
+	fmt.Println(*opt) // ""
+
+Sometimes this does the right thing - "go" takes different flags than "go build"
+for example and you don't want to parse "go" flags placed after "build". However
+sometimes you are at the end of the parse chain and anything that's left should
+be counted as an argument.
+
+This does the dumbest possible thing which is to rearrange the flags so any
+options come first. Anything after `--` is ignored. A single `-` counts as a
+positional (i.e. non-flag) argument.
+*/
 package flagr
 
 import (
@@ -6,7 +25,9 @@ import (
 	"fmt"
 )
 
+// Booler tells you whether a flag.Value is a BoolFlag.
 type Booler interface {
+	// IsBoolFlag returns true if the flag.Value is a boolean flag.
 	IsBoolFlag() bool
 }
 
